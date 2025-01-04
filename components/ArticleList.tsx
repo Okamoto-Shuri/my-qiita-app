@@ -72,23 +72,23 @@ const ArticleList: React.FC<ArticleListProps> = ({ apiKey }) => {
 
   useEffect(() => {
     const fetchArticles = async () => {
-      if (!apiKey) return; // APIキーがない場合は何もしない
-
       try {
-        const response = await axios.get('https://qiita.com/api/v2/items', {
+        const config: any = {
           params: { query: searchQuery, per_page: 20 },
-          headers: {
-            'Authorization': `Bearer ${apiKey}`
-          }
-        });
-        console.log(response.data);
+        };
+        if (apiKey) {
+          config.headers = { Authorization: `Bearer ${apiKey}` };
+        }
+
+        const response = await axios.get('https://qiita.com/api/v2/items', config);
+        console.log(response.data);  // 追加: レスポンスデータをコンソールに出力
         setArticles(response.data);
       } catch (error) {
         console.error('Error fetching articles:', error);
       }
     };
     fetchArticles();
-  }, [searchQuery, apiKey]); // apiKeyを依存配列に追加
+  }, [searchQuery, apiKey]);
 
   return (
     <Container>
